@@ -17,7 +17,7 @@ export class AuthService {
       tap((res : HttpResponse<any>) =>{
         //the auth tokens will be in the response of the header
         this.setSession(res.body._id, res.headers.get('x-access-token'),res.headers.get('x-refresh-token'));
-        console.log('logged in');
+       
         
       })
     )

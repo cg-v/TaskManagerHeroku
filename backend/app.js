@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('./db/mongoose');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 //mongoose models
 const {List,Task, User} = require('./db/models');
@@ -9,7 +10,9 @@ const {List,Task, User} = require('./db/models');
 
 const jwt = require('jsonwebtoken');
 //load miidleware
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 //cors
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
@@ -25,7 +28,7 @@ app.use(function(req, res, next) {
   });
 
   // check whether the request has a valid JWT access token
-let authenticate = (req, res, next) => {
+let authenticate = (req, res, next) => {console.log('in authenticaton');
     let token = req.header('x-access-token');
 
     // verify the JWT
@@ -338,6 +341,17 @@ let deleteTasksFromList = (_listId) => {
 
 
 
-app.listen(4000, () => {
-    console.log("Server is listening on port 4000");
+const PORT = process.env.PORT || 8080; //heroku
+//heroku upload
+  
+app.use(express.static(path.join((__dirname, 'public'))));
+
+app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+})
+
+//heroku end
+
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 })
